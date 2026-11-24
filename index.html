@@ -279,6 +279,11 @@ html{scroll-snap-type:y proximity}
 .bgs img.image-unavailable,.ph img.image-unavailable,.wall img.image-unavailable{opacity:.25;object-fit:contain}
 .video-card video{background:#000}
 .bgs:not(:has(img)){display:none}
+.mp path.rd{stroke:#ffffff2e;stroke-width:1.5;stroke-dasharray:3 7;stroke-dashoffset:0;filter:none;transition:none}
+.mp path.gl2{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 6.5s ease-in-out .3s}
+.v .mp path.gl2{stroke-dashoffset:0}
+.pn div{width:136px}
+.pn div em{display:block;font:normal .66rem var(--f1);letter-spacing:.08em;opacity:.75;margin-top:3px}
 </style></head><body class="dark">
 <div id="ld"><div class="ring"><div class="mono">M<i>♥</i>F</div></div><p>Loading our story…</p><div class="pgw"><div id="pg"></div></div></div><div id="pb"></div>
 <canvas id="bg"></canvas>
@@ -337,7 +342,7 @@ const M=[[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],[392,.75],[392,.25]
 const sp=(s,o)=>[...s].map((c,i)=>`<span style="animation-delay:${(.3+(o+i)*.07).toFixed(2)}s">${c==' '?'&nbsp;':c}</span>`).join('');
 function lights(){B.className='party';mode='party';note(130,ac.currentTime,.7,.5);burst(.1,1,70,6);burst(.9,1,70,-6);
 for(let i=0;i<14;i++){const b=document.createElement('div');b.className='bl';b.textContent='🎈';b.style.cssText=`left:${R()*90}%;font-size:${34+R()*26}px;animation-duration:${7+R()*5}s;animation-delay:${R()*2}s;filter:hue-rotate(${R()*360}deg)`;b.onanimationend=()=>b.remove();$('s1').appendChild(b)}}
-$('go').onclick=()=>{$('song').preload='auto';$('song').load();ac=new(window.AudioContext||window.webkitAudioContext)();
+$('go').onclick=()=>{$('song').preload='auto';$('song').load();warmRest();ac=new(window.AudioContext||window.webkitAudioContext)();
 $('ban').innerHTML=sp('Happy Birthday',0)+'<br>'+sp('to Me 🎉',14);
 $('s1').classList.add('go');lights();
 let t=ac.currentTime+1;M.forEach(([f,u])=>{const d=u*.42;note(f,t,d*.95);note(f/2,t,d*.95,.1);t+=d});
@@ -417,8 +422,10 @@ const EXTRA='<h2 class="mo"><span class="shine">Just for you</span> 💝</h2>'
 +`<article class="st">${hd('💞 Why my heart chose you')}<div id="dk"><p id="dt"></p></div><div class="dn"><button id="dp" aria-label="Previous">‹</button><span id="dc"></span><button id="dx" aria-label="Next">›</button></div></article>`
 +`<article class="st" id="gf">${hd('🎁 A little gift')}<div class="sc"><div class="pz">A special date, just the two of us 💫<br>Where and when? Let me keep it a secret… 🤍</div><canvas id="scv"></canvas></div></article>`;
 const CR=`<section id="cr"><div class="rl"><p class="k">A film in one year</p><p class="k">Starring</p><b>Fatafeto</b><p class="k">Directed by</p><b>Matameto</b><p class="k">Location</p><b>Our Home</b><p class="k">Duration</p><b>One year and counting</b><h2>The End 🤍</h2><p class="k">To be continued… 💫</p></div></section>`;
-const MP=[['💼','WHERE IT BEGAN','Concentrix','l',23.3],['☕','OUR FIRST OUTING','Smart Village café','r',76.7],['🚤','THE NILE','Oliver Boat','l',23.3],['🎂','YOUR BIRTHDAY','Breadfast, Pyramids','r',76.7],['🕊️','FATIHA · 20 JUNE 2026','Her family home','l',23.3],['💍','ENGAGEMENT · 20 AUGUST 2026','Celina Hall · Maadi','r',76.7],['🏠','OUR HOME','New October · 800 Feddan','l',23.3]];
-const MAP=`<article class="st" id="mp">${hd('🗺️ Our map')}<p style="margin-top:8px">The places that wrote our story. 📍</p><div class="mp"><svg viewBox="0 0 300 560" preserveAspectRatio="none"><path d="M70 60C70 115 230 115 230 170S70 225 70 280S230 335 230 390S70 445 70 500"/></svg>${MP.map((m,i)=>`<div class="pn ${m[3]}" style="left:${m[4]}%;top:${(30+i*500/(MP.length-1))/5.6}%;--d:${(.6+i*.55).toFixed(2)}s"><b>${m[0]}</b><div><strong>${m[1]}</strong>${m[2]}</div></div>`).join('')}</div><div class="map-milestones"><div><b>20 June 2026 · Fatiha</b><span>At Farah’s family home</span></div><div><b>20 August 2026 · Engagement</b><span>Celina Hall · Maadi</span></div></div></article>`;
+const MP=[['💼','WHERE IT BEGAN','Concentrix','l','30 Nov 2025'],['☕','OUR FIRST OUTING','Smart Village café','r','13 Mar 2026'],['🚤','THE NILE','Oliver Boat','l',''],['🕊️','FATIHA','Her family home','r','20 Jun 2026'],['💍','ENGAGEMENT','Celina Hall · Maadi','l','20 Aug 2026'],['🎂','YOUR BIRTHDAY','Breadfast, Pyramids','r','18 Sep 2026'],['🏠','OUR HOME','New October · 800 Feddan','l','8 Nov 2026']];
+const MPS=92,MPT=44,MPH=MPT*2+MPS*(MP.length-1),mpx=i=>i%2?230:70,mpy=i=>MPT+i*MPS;
+let mpd='M'+mpx(0)+' '+mpy(0);for(let i=1;i<MP.length;i++){const a=mpy(i-1),b=mpy(i),m=(b-a)/2;mpd+=`C${mpx(i-1)} ${a+m} ${mpx(i)} ${b-m} ${mpx(i)} ${b}`}
+const MAP=`<article class="st" id="mp">${hd('🗺️ Our map')}<p style="margin-top:8px">The places that wrote our story. 📍</p><div class="mp" style="height:${MPH}px"><svg viewBox="0 0 300 ${MPH}" preserveAspectRatio="none"><path class="rd" d="${mpd}"/><path class="gl2" pathLength="1" d="${mpd}"/></svg>${MP.map((m,i)=>`<div class="pn ${m[3]}" style="left:${mpx(i)/3}%;top:${mpy(i)/MPH*100}%;--d:${(.6+i*.8).toFixed(2)}s"><b>${m[0]}</b><div><strong>${m[1]}</strong>${m[2]}${m[4]?`<em>${m[4]}</em>`:''}</div></div>`).join('')}</div></article>`;
 const SONG=`<article class="st">${hd('🎵 Our song')}<div class="vn" id="vn"><i></i></div><div class="sn">Lamstak</div><div class="sa">AMR MOSTAFA</div><p>A song I'm dedicating to you, Fatafeto 🤍</p><button id="pp">Play</button></article>`;
 const HB=`<article class="st" id="hb">${hd('💓 Heartbeats')}<div class="hb">❤️</div><div id="hn">0</div><p>That's how many times my heart has beaten since the day we met. And every single beat has your name on it. 🤍</p></article>`;
 const WL=Object.values(FILES).flat();
@@ -437,6 +444,7 @@ $('s3').innerHTML=I.slice(0,10).map(chap).join('')+'<h2 class="mo"><span class="
 // Ask the browser to fetch video metadata while the intro is still visible.
 const vio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const v=e.target;v.preload='metadata';v.load();vio.unobserve(v)}}),{rootMargin:'150% 0px'});document.querySelectorAll('#s3 video').forEach(v=>vio.observe(v));
 let done=0;
+function warmRest(){const list=Object.values(FILES).flat().slice(3);let next=0;Array.from({length:3},async()=>{while(next<list.length)await warmImage(list[next++])})}
 let bgBlocked=false;function playBg(){$('song').play().then(()=>{bgBlocked=false}).catch(()=>{bgBlocked=true})}
 $('song').addEventListener('canplay',()=>{if(bgBlocked&&B.classList.contains('scroll')&&$('specialSong').paused)playBg()});
 document.addEventListener('pointerdown',()=>{if(bgBlocked&&B.classList.contains('scroll')&&$('specialSong').paused&&!$('song').muted)playBg()},{passive:true});
