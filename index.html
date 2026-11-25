@@ -284,6 +284,26 @@ html{scroll-snap-type:y proximity}
 .v .mp path.gl2{stroke-dashoffset:0}
 .pn div{width:136px}
 .pn div em{display:block;font:normal .66rem var(--f1);letter-spacing:.08em;opacity:.75;margin-top:3px}
+#skip{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:3;padding:6px 13px;font-size:.6rem;letter-spacing:.1em;opacity:.85;box-shadow:inset 0 1px 0 #ffffffb3,inset 0 -2px 5px #0006,0 3px 0 #7a1230,0 6px 10px #000a}
+.bgs{overflow:visible}
+.bgs .chapter-track{border-radius:21px}
+.bgs:has(.gallery-controls){margin-bottom:64px}
+.gallery-controls{bottom:auto;top:calc(100% + 12px)}
+.gallery-controls button{padding:3px 12px;font-size:.95rem;min-width:36px;box-shadow:inset 0 1px 0 #ffffffb3,inset 0 -2px 5px #0006,0 3px 0 #7a1230,0 6px 10px #000a}
+.gallery-count{font-size:.66rem;padding:5px 11px}
+.mp2{position:relative;margin-top:24px;padding:4px 0}
+.mp2::before{content:'';position:absolute;left:50%;top:0;bottom:0;margin-left:-1px;border-left:2px dotted #ffffff30}
+.mp2 .fill{position:absolute;left:50%;top:0;width:2px;height:0;margin-left:-1px;background:linear-gradient(#e8c872,#c8294f);box-shadow:0 0 8px #e8c872;transition:height 6.5s ease-in-out .3s}
+.v .mp2 .fill{height:100%}
+.sp{position:relative;display:flex;margin-bottom:20px;opacity:0;transform:translateY(14px);transition:opacity .8s var(--d),transform .8s var(--d)}
+.v .sp{opacity:1;transform:none}
+.sp.l{justify-content:flex-start}.sp.r{justify-content:flex-end;margin-top:-30px}
+.sp b{position:absolute;left:50%;top:12px;width:40px;height:40px;margin-left:-20px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem;font-weight:400;background:#1a0710;border:2px solid var(--g);box-shadow:0 0 14px #e8c872aa;z-index:1}
+.cd2{width:calc(50% - 30px);padding:10px 12px;border:1px solid #e8c87244;border-radius:14px;background:linear-gradient(180deg,#ffffff1c,#ffffff08);box-shadow:inset 0 1px 0 #ffffff33,0 6px 14px #0007}
+.sp.l .cd2{text-align:right}.sp.r .cd2{text-align:left}
+.cd2 strong{display:block;font:600 .6rem var(--f1);letter-spacing:.12em;color:var(--g)}
+.cd2 span{display:block;font:italic .92rem/1.3 var(--f2);margin-top:3px}
+.cd2 em{display:block;font:normal .62rem var(--f1);letter-spacing:.08em;opacity:.75;margin-top:4px}
 </style></head><body class="dark">
 <div id="ld"><div class="ring"><div class="mono">M<i>♥</i>F</div></div><p>Loading our story…</p><div class="pgw"><div id="pg"></div></div></div><div id="pb"></div>
 <canvas id="bg"></canvas>
@@ -293,6 +313,7 @@ html{scroll-snap-type:y proximity}
 <button id="mu" aria-label="Sound">🔊</button>
 
 <section class="scr on" id="s1">
+<button id="skip" type="button">Skip intro ›</button>
 <div id="st0"><p>Hi Fatafeto 🤍<br>Today is my birthday…<br>will you celebrate with me? 🎈</p><button id="go">Let's celebrate</button></div>
 <div class="pre"><h1 id="ban"></h1>
 <div class="cake"><div class="l1"></div><div class="l2"></div>
@@ -320,6 +341,7 @@ html{scroll-snap-type:y proximity}
 
 <script>
 const $=id=>document.getElementById(id),B=document.body,R=Math.random;
+let skipped=false;const TID=[],_st=window.setTimeout;window.setTimeout=function(f,ms,...a){const id=_st(f,ms,...a);TID.push(id);return id};
 const cv=$('bg'),x=cv.getContext('2d');let W,H,mode='dark';
 function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}rs();onresize=rs;
 const P=[...Array(60)].map(()=>({x:R(),y:R(),v:.002+R()*.003,c:`hsl(${R()*360},80%,65%)`,r:4+R()*5})),
@@ -342,7 +364,7 @@ const M=[[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],[392,.75],[392,.25]
 const sp=(s,o)=>[...s].map((c,i)=>`<span style="animation-delay:${(.3+(o+i)*.07).toFixed(2)}s">${c==' '?'&nbsp;':c}</span>`).join('');
 function lights(){B.className='party';mode='party';note(130,ac.currentTime,.7,.5);burst(.1,1,70,6);burst(.9,1,70,-6);
 for(let i=0;i<14;i++){const b=document.createElement('div');b.className='bl';b.textContent='🎈';b.style.cssText=`left:${R()*90}%;font-size:${34+R()*26}px;animation-duration:${7+R()*5}s;animation-delay:${R()*2}s;filter:hue-rotate(${R()*360}deg)`;b.onanimationend=()=>b.remove();$('s1').appendChild(b)}}
-$('go').onclick=()=>{$('song').preload='auto';$('song').load();warmRest();ac=new(window.AudioContext||window.webkitAudioContext)();
+$('go').onclick=()=>{prep();ac=new(window.AudioContext||window.webkitAudioContext)();
 $('ban').innerHTML=sp('Happy Birthday',0)+'<br>'+sp('to Me 🎉',14);
 $('s1').classList.add('go');lights();
 let t=ac.currentTime+1;M.forEach(([f,u])=>{const d=u*.42;note(f,t,d*.95);note(f/2,t,d*.95,.1);t+=d});
@@ -363,7 +385,7 @@ const T=(f,ms)=>setTimeout(f,ms),t1=$('t1'),t2=$('t2'),dd=$('dd');
 T(()=>{sweep(420,40,.4,'sawtooth',.2);B.className='dark shake';mode='dim'},6500);
 T(()=>{$('s1').classList.add('twist');t1.className='gl';t1.innerHTML='Wait… 🤔';t2.textContent="Today isn't only my birthday."},8000);
 T(()=>{t1.className='sm';t1.textContent='⏪  Let me take you back…';t2.style.opacity=0;dd.textContent='30 · 11 · 2026';$('sl').classList.add('on')},10800);
-T(()=>{dd.className='rw';sweep(90,1500,2.8,'sawtooth',.07);rewind(2800,()=>{
+T(()=>{dd.className='rw';sweep(90,1500,2.8,'sawtooth',.07);rewind(2800,()=>{if(skipped)return;
 dd.className='';$('sl').classList.remove('on');mode='sky';flash();bell();t1.textContent='';
 T(()=>{t2.textContent='A year ago today, your birthday wish changed my life. 🤍';t2.style.opacity=1},700);
 T(()=>{flash();burst(.2,.5,50,0,1);burst(.8,.5,50,0,1);burst(.5,.3,60,0,1);
@@ -423,9 +445,7 @@ const EXTRA='<h2 class="mo"><span class="shine">Just for you</span> 💝</h2>'
 +`<article class="st" id="gf">${hd('🎁 A little gift')}<div class="sc"><div class="pz">A special date, just the two of us 💫<br>Where and when? Let me keep it a secret… 🤍</div><canvas id="scv"></canvas></div></article>`;
 const CR=`<section id="cr"><div class="rl"><p class="k">A film in one year</p><p class="k">Starring</p><b>Fatafeto</b><p class="k">Directed by</p><b>Matameto</b><p class="k">Location</p><b>Our Home</b><p class="k">Duration</p><b>One year and counting</b><h2>The End 🤍</h2><p class="k">To be continued… 💫</p></div></section>`;
 const MP=[['💼','WHERE IT BEGAN','Concentrix','l','30 Nov 2025'],['☕','OUR FIRST OUTING','Smart Village café','r','13 Mar 2026'],['🚤','THE NILE','Oliver Boat','l',''],['🕊️','FATIHA','Her family home','r','20 Jun 2026'],['💍','ENGAGEMENT','Celina Hall · Maadi','l','20 Aug 2026'],['🎂','YOUR BIRTHDAY','Breadfast, Pyramids','r','18 Sep 2026'],['🏠','OUR HOME','New October · 800 Feddan','l','8 Nov 2026']];
-const MPS=92,MPT=44,MPH=MPT*2+MPS*(MP.length-1),mpx=i=>i%2?230:70,mpy=i=>MPT+i*MPS;
-let mpd='M'+mpx(0)+' '+mpy(0);for(let i=1;i<MP.length;i++){const a=mpy(i-1),b=mpy(i),m=(b-a)/2;mpd+=`C${mpx(i-1)} ${a+m} ${mpx(i)} ${b-m} ${mpx(i)} ${b}`}
-const MAP=`<article class="st" id="mp">${hd('🗺️ Our map')}<p style="margin-top:8px">The places that wrote our story. 📍</p><div class="mp" style="height:${MPH}px"><svg viewBox="0 0 300 ${MPH}" preserveAspectRatio="none"><path class="rd" d="${mpd}"/><path class="gl2" pathLength="1" d="${mpd}"/></svg>${MP.map((m,i)=>`<div class="pn ${m[3]}" style="left:${mpx(i)/3}%;top:${mpy(i)/MPH*100}%;--d:${(.6+i*.8).toFixed(2)}s"><b>${m[0]}</b><div><strong>${m[1]}</strong>${m[2]}${m[4]?`<em>${m[4]}</em>`:''}</div></div>`).join('')}</div></article>`;
+const MAP=`<article class="st" id="mp">${hd('🗺️ Our map')}<p style="margin-top:8px">The places that wrote our story. 📍</p><div class="mp2"><i class="fill"></i>${MP.map((m,i)=>`<div class="sp ${m[3]}" style="--d:${(.5+i*.75).toFixed(2)}s"><b>${m[0]}</b><div class="cd2"><strong>${m[1]}</strong><span>${m[2]}</span>${m[4]?`<em>${m[4]}</em>`:''}</div></div>`).join('')}</div></article>`;
 const SONG=`<article class="st">${hd('🎵 Our song')}<div class="vn" id="vn"><i></i></div><div class="sn">Lamstak</div><div class="sa">AMR MOSTAFA</div><p>A song I'm dedicating to you, Fatafeto 🤍</p><button id="pp">Play</button></article>`;
 const HB=`<article class="st" id="hb">${hd('💓 Heartbeats')}<div class="hb">❤️</div><div id="hn">0</div><p>That's how many times my heart has beaten since the day we met. And every single beat has your name on it. 🤍</p></article>`;
 const WL=Object.values(FILES).flat();
@@ -444,7 +464,13 @@ $('s3').innerHTML=I.slice(0,10).map(chap).join('')+'<h2 class="mo"><span class="
 // Ask the browser to fetch video metadata while the intro is still visible.
 const vio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const v=e.target;v.preload='metadata';v.load();vio.unobserve(v)}}),{rootMargin:'150% 0px'});document.querySelectorAll('#s3 video').forEach(v=>vio.observe(v));
 let done=0;
+let prepped=0;function prep(){if(prepped)return;prepped=1;$('song').preload='auto';$('song').load();warmRest()}
 function warmRest(){const list=Object.values(FILES).flat().slice(3);let next=0;Array.from({length:3},async()=>{while(next<list.length)await warmImage(list[next++])})}
+$('skip').onclick=()=>{skipped=true;TID.forEach(clearTimeout);TID.length=0;prep();
+try{if(ac)ac.close()}catch(e){}ac=new(window.AudioContext||window.webkitAudioContext)();
+document.querySelectorAll('.bl').forEach(b=>b.remove());BP.length=0;$('sl').classList.remove('on');
+B.className='sky';mode='sky';$('s1').classList.remove('on');$('s2').classList.add('on');flash()};
+$('song').addEventListener('ended',()=>{$('song').currentTime=0;playBg()});
 let bgBlocked=false;function playBg(){$('song').play().then(()=>{bgBlocked=false}).catch(()=>{bgBlocked=true})}
 $('song').addEventListener('canplay',()=>{if(bgBlocked&&B.classList.contains('scroll')&&$('specialSong').paused)playBg()});
 document.addEventListener('pointerdown',()=>{if(bgBlocked&&B.classList.contains('scroll')&&$('specialSong').paused&&!$('song').muted)playBg()},{passive:true});
